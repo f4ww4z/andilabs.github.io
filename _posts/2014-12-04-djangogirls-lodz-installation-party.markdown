@@ -217,7 +217,7 @@ Push it:
 
     git push origin master
 
-Go to [https://github.com/](https://github.com/) and chech if your commit was really pushed.
+Go to [https://github.com/](https://github.com/) and check if your commit was really pushed.
 
 ####Basic commands demo:
 
