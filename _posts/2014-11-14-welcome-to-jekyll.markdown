@@ -11,7 +11,7 @@ I was thinking about right choice for bloging platform/tool, such, which will:
 * will offer me beatiful possiblites of formating text just by indendtation, without any need of HTML
 * will offer nice coloring of the source codes in different programming languages
 
-I have choosen [jekyll] which you can easily host as [github] site. Jekyll uses [markdown] that is the same coloring, formating richness which you can find for example while writing stackoverflow question/answer or writing your documentation using [sphinx]
+I have choosen [jekyll] which you can easily host as [github] site. Jekyll uses [markdown] that is the same coloring, formating richness which you can find for example while writing stackoverflow question/answer or writing your documentation using [sphinx]. You can even make edits from github.com as CMS so there is huge portability. It will be build on github's server.
 
 [jekyll]:	http://jekyllrb.com
 [github]:	https://pages.github.com/
