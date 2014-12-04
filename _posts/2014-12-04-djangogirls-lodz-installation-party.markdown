@@ -10,7 +10,8 @@ Installation party
 
 
 True to be told, when I've heard that I will as coach guide people how to start with Python and Django using Windows I was scared a bit! I've thought installing dev stuff on Windows will be ass-pain, but I have to admit it was only a bit harder than on Linux, but anyway way easier than on OS X.
-----------------
+
+So, let's go!
 
 To be installed:
 ----------------
