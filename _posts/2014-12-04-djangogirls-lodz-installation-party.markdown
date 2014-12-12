@@ -1,4 +1,5 @@
 ---
+published: false
 layout: post
 title:  "Djangogirls: Installation Party notes for Windows users"
 date:   2014-12-04 12:49:17
@@ -54,8 +55,8 @@ SublimeText
 * enable installation of 3-rd party packages: View -> Show console and copy-paste piece of script from:
     https://sublime.wbond.net/installation to the console. Then `shift + ctrl + P` and start typing: install packages and install
 
-        djaneiro
-        SublimeLinter-pep8
+      djaneiro
+      SublimeLinter-pep8
 
 GIT
 ===
@@ -140,25 +141,25 @@ just:
 
     deactivate
 
-* **WINDOWS PowerShell DISCLOSURE**
+* **PowerShell DISCLOSURE**
 
     Due to powershell security restrictions issue (setup only once):
 
     * Run PowerShell as admin !!
     * Execute this command:
 
-        `Set-ExecutionPolicy Unrestricted -Scope CurrentUser`
+          Set-ExecutionPolicy Unrestricted -Scope CurrentUser
 
 
 * WHAT IS INSIDE MY CURRENT VIRTUALENV?
 
-check it by listing installed libraries:
+    * check it by listing installed libraries:
 
-    pip freeze
+          pip freeze
 
-by the way if you want to create `reuqirements.txt` for your project just:
+    * by the way if you want to create `reuqirements.txt` for your project just:
 
-    pip freeze > reuqirements.txt
+          pip freeze > reuqirements.txt
 
 GIT + Github.com
 ================
