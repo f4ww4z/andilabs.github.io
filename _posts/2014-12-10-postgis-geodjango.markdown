@@ -1,6 +1,6 @@
 ---
 layout: post
-published: false
+<!-- published: false -->
 title:  "Budowanie wydajnego backendu aplikacji mobilnej wykorzystującej geolokalizację i dane przestrzenne (demo wykorzystania PostGIS i GeoDjango)."
 date:   2014-12-10 14:05:00
 categories: django devops tools postgres postgis
@@ -77,7 +77,7 @@ GeoDjango - BOGACTWO
 
 Jak już wspomnieliśmy dzięki skorzystaniu z GeoDjango otrzymujemy dostęp do wielu ciekawych klas i metod do operowania na danych przestrzennych.
 
-Zacznijmy od dostępnych typów danych:
+Zacznijmy od dostępnych typów danych do przechowywania:
 
 - **PointField** - przechowuje standardowe współrzędne (długość, szerokośc) geograficzną. Być może Tobie również ta kolejność inicjalizowania punktu: najpierw długość (longitude) a potem szerokość (latitude) nie wydaje się naturalna, ale to właśnie kolejność jakiej oczekuje od nas GeoDjango (łatwo o banalaną pomyłkę). 
 
@@ -111,7 +111,20 @@ Warto zauważyć, że rejestrując w djangowym adminie model zawierający geoprz
 
 ![GeoDjango widget for picking point in admin](/assets/django-admin-pick-point-for-geodjango.png)
 
-WYMAGAINIA
+Kolejnym ważnym elementem są zasoby modułu: `django.contrib.gis.measure` umożliwiające dokonywanie wszelkiego rodzaju pomiarów odległości pomiędzy punktami lub innymi obiektami. Klasa [Distance](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#django.contrib.gis.measure.Distance) (dostępna również przez alias D) pozwala ponadto na łatwą manipulację jednostkami miary odległości ([wspierane miary](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#supported-units)). W module znajdziemy również klasę [Area](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#area) niezbędną wszędzie tam gdzie będziemy chcieli ustalać wielkość powierzchni.
+
+Kwintesencję użycia GeoDjango znajdziemy korzystając z [spatial lookups](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#spatial-lookups) umożliwiającego bardzo bogate możliwości filtrowania danych geoprzestrzennych. Poniżej krótka lista i możliwości poszczególnych metod:
+
+
+
+Dobry przykładem niech będzie wykonanie kwerendy typu `znajdź obiektu w promieniu` 1km dla zadanego aktualnego położenia `user_location`:
+{% highlight python %}
+SomeGisDBBasedModel.objects.filter(
+    some_pointfield__distance_lte=(user_location, D(km=1))
+    ).distance(user_location).order_by('distance')
+{% endhighlight %}
+
+WYMAGAINIA dla naszej demonstracyjnej aplikacji
 ----------
  Naszą demonstracyjną aplikację nazwijmy "FuckFinder", co w gruncie rzeczy dość dobrze oddaje filozofię Tindera ;) (Jest to prywatna opinia autora a nie oficjalne stanowisko firmy DaftCode).
 
@@ -119,7 +132,7 @@ W wersji minimalnej chcemy stworzyć:
 
 a) uproszczony model użytkownika aplikacji
 
-b) kluczowy widok odpowiadający za zwracanie osób z okolicy spełniających kryteria wieku, płci i przedewszystkim bycia w zadanym promieniu (wyrażonym w km) od aktualnej lokalizacji poszukującegp.
+b) kluczowy widok odpowiadający za zwracanie osób z okolicy spełniających kryteria wieku, płci i przedewszystkim bycia w zadanym promieniu (wyrażonym w km) od aktualnej lokalizacji poszukującego oraz zwracający wyliczoną odległość.
 
 
 MODEL DANYCH:
@@ -475,4 +488,6 @@ DALSZE INFORMACJE
 
 * [stackexchange dla GIS](http://gis.stackexchange.com/)
 * [GeoDjango Database API](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#)
+* [Geometry Field Types](https://docs.djangoproject.com/en/dev/ref/contrib/gis/model-api/#django.contrib.gis.db.models.GeometryField)
+* [GeoQuerySet API Reference](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#geoqueryset-api-reference)
 * [postgis](http://postgis.net/)
