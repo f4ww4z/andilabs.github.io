@@ -9,7 +9,7 @@ categories: django djangogirls devops tools vagrant
 What is Vagrant
 ===============
 
-Vagrant is tool allowing easy start of virtual machines for development. Mostly we think about Linux. The machine has no GUI only command line. It uses virtualbox as virtualatization backend. It is avaliable for all platforms, including Windows, Mac and Linux.
+[Vagrant](https://www.vagrantup.com/) is tool allowing easy start of virtual machines for development. Mostly we think about Linux. The machine has no GUI only command line. It uses virtualbox as virtualatization backend. It is avaliable for all platforms, including Windows, Mac and Linux.
 
 
 Motivation for using Vagrant
@@ -44,6 +44,6 @@ Further guidlines for vagrant setup.
 
 - For performance issues, it is worth consider hosting on some local machine the image of Linux to be download by vagrant (or having it on usb stick), to be Internet connection/speed independent.
 
-- As extension we can create the tutorial how to use salt, which throguh configuration files, and states allows a very fast managment of machine configuration.
+- As extension we can create the tutorial how to use [salt](https://docs.vagrantup.com/v2/provisioning/salt.html), which throguh configuration files, and states allows a very fast managment of machine configuration, automates installation, pulling from repos, etc.
 
 - On USB stick it will be worth to have installation packages of VirtualBox and Vagrant for Mac, Windows and Linux.
