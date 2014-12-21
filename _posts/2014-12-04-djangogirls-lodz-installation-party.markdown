@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 layout: post
 title:  "Djangogirls: Installation Party notes for Windows users"
 date:   2014-12-04 12:49:17
