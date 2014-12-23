@@ -22,7 +22,7 @@ Technologie z których skorzystamy:
 DLACZEGO PostGIS?
 -----------------
 
-Teoretycznie rzecz biorąc moglibyśmy przechowywać w właściwie dowolnej bazie współrzędne i wykonywać kwerendę typu find-nearby korzystając z formuły [Haversine](http://en.wikipedia.org/wiki/Haversine_formula), przykład djangowego widoku w MySQL vs z użyciem PostGIS [tutaj](https://gist.github.com/andilabs/4232b463e5ad2f19c155).
+Teoretycznie rzecz biorąc moglibyśmy przechowywać w właściwie dowolnej bazie współrzędne i wykonywać kwerendę typu find-nearby korzystając z uiwersalnej formuły [Haversine](http://en.wikipedia.org/wiki/Haversine_formula), przykład konfrontujący djangowy widok wykorzystujący raw_sql do MySQL vs z djangowy widok z użyciem GeoDjango:
 
 {% highlight python %}
 def nearby_spots_haversine(request, lat, lng, radius=5000, limit=50):
@@ -67,15 +67,24 @@ def nearby_spots_postgis(request, lat, lng, radius=5000, limit=50):
     return JSONResponse(serializer.data)
 {% endhighlight %}
 
-Chociaż moglibyśmy też być dużo bardziej minimalistyczni w podejściu i pomijąc krzywiznę ziemi (co w konkretnych przypadakch - szukanie punktów w promieniu kilku do kilkunastu kilometrów nie wiąże się ze znaczącym błędem) podejść do tematu np. tak jak w pokazanej przez autora [odpowiedzi na SO](http://stackoverflow.com/questions/17682201/how-to-filter-a-django-model-with-latitude-and-longitude-coordinates-that-fall-w/21429344#21429344) czyli zwyczajnie odfiltrować obiekty z bazy wpadające w pewien przedział szerokości i długości geograficznej, którcyh przecięcia wyznaczają kwadrat (na poziomie filtrowania db) i zwrócić punkty należący wyłącznie do okręgu wpisanego w ten kwadrat (odfiltrowanie w kodzie pythona).
+Ostatecznie moglibyśmy też być dużo bardziej minimalistyczni w podejściu i pomijąc takie niuanse jak krzywizna ziemi (co w konkretnych przypadakch - szukanie punktów w promieniu kilku kilometrów nie wiąże się ze znacznym błędem) podejść do tematu np. tak jak w pokazanej przez autora [odpowiedzi na SO](http://stackoverflow.com/questions/17682201/how-to-filter-a-django-model-with-latitude-and-longitude-coordinates-that-fall-w/21429344#21429344) czyli zwyczajnie odfiltrować obiekty z bazy wpadające w pewien przedział szerokości i długości geograficznej, którcyh przecięcia wyznaczają kwadrat (na poziomie filtrowania db) i zwrócić punkty należący wyłącznie do okręgu wpisanego w ten kwadrat (odfiltrowanie w kodzie pythona).
 
-Rozwiązanie z pisaniem gołych SQL-i w Django wydaje się niezbyt pociągające, ponad to ich używanie  jest uznane za złą praktykę w Django. Co więcej przyklejamy się na stałe do jednej bazy i tracimy łatwość przesiadki na inną co daje nam ORM, z drugiej strony wybór GeoDjango to też pewne zawężenie w kontekście wyboru bazy (mamy do dyspozycji następujące backendy (django.contrib.gis.db.backends.postgis, django.contrib.gis.db.backends.mysql, django.contrib.gis.db.backends.oracle, django.contrib.gis.db.backends.spatialite), ale za to dzięki wyboru GeoDjango dostajemy możliwość uniknięcia pisania raw-SQL-i, oraz dostajemy całe bogactwo klas i metod do działania na danych przestrzennych, o których kilka słów dalej.
-Wspomniane backendy bazodanowe w różnym stopniu wspierają poszczególne funckjonalności. Porównanie dostępności funckji można znaleźć [tutaj](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#compatibility-tables). Dlaczego wybieramy PostGIS? Bo ma najszersze wsparcie dla funkcjonalności GeoDjango i pozostajemy przy naszym ulubionym Postgresie.
+Rozwiązanie z pisaniem gołych SQL-i w Django wydaje się niezbyt eleganckie, a ich używanie  jest uznane za złą praktykę w Django. Co więcej przyklejamy się na stałe do jednej bazy i tracimy łatwość przesiadki na inną co daje nam ORM, z drugiej strony wybór GeoDjango to też pewne zawężenie w kontekście wyboru bazy - mamy do dyspozycji następujące backendy:
+
+* django.contrib.gis.db.backends.postgis,
+* django.contrib.gis.db.backends.mysql,
+* django.contrib.gis.db.backends.oracle,
+* django.contrib.gis.db.backends.spatialite,
+
+ale za to dzięki wyboru GeoDjango dostajemy możliwość uniknięcia pisania raw-SQL-i, oraz dostajemy całe bogactwo klas i metod do działania na danych przestrzennych, o których kilka słów dalej.
+Wspomniane backendy bazodanowe w różnym stopniu wspierają poszczególne funckjonalności. Porównanie dostępności funckji można znaleźć [tutaj](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#compatibility-tables).
+
+Dlaczego wybieramy PostGIS? Bo ma najszersze wsparcie dla funkcjonalności GeoDjango i pozostajemy przy naszym ulubionym do djangodevelopmentu Postgresie.
 
 GeoDjango - BOGACTWO
 --------------------
 
-Jak już wspomnieliśmy dzięki skorzystaniu z GeoDjango otrzymujemy dostęp do wielu ciekawych klas i metod do operowania na danych przestrzennych.
+Jak już wspomnieliśmy dzięki skorzystaniu z GeoDjango otrzymujemy dostęp do wielu ciekawych klas i metod do operowania na danych przestrzennych, które postaram się w tej części pokrótce omówić.
 
 [Geometry Field Types](https://docs.djangoproject.com/en/dev/ref/contrib/gis/model-api/#django.contrib.gis.db.models.GeometryField):
 
@@ -115,11 +124,20 @@ Warto zauważyć, że rejestrując w djangowym adminie model zawierający geoprz
 
 Kolejnym ważnym elementem są zasoby modułu: `django.contrib.gis.measure` umożliwiające dokonywanie wszelkiego rodzaju pomiarów odległości pomiędzy punktami lub innymi obiektami. Klasa [Distance](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#django.contrib.gis.measure.Distance) (dostępna również przez alias D) pozwala ponadto na łatwą manipulację jednostkami miary odległości ([wspierane miary](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#supported-units)). W module znajdziemy również klasę [Area](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#area) niezbędną wszędzie tam gdzie będziemy chcieli ustalać wielkość powierzchni.
 
-[GeoQuerySet API Reference](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#geoqueryset-api-reference)
+[GeoQuerySet API Reference](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#geoqueryset-api-reference):
 
-Kwintesencję użycia GeoDjango znajdziemy korzystając z [spatial lookups](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#spatial-lookups) umożliwiającego bardzo bogate możliwości filtrowania danych geoprzestrzennych. Poniżej krótka lista i możliwości poszczególnych metod:
+GeoDjango docenimy na prawdę korzystając z [spatial lookups](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#spatial-lookups) umożliwiającego bardzo bogate możliwości filtrowania danych geoprzestrzennych. Poniżej krótka lista i możliwości poszczególnych metod:
 
-
+    ##############################################################
+    #                                                            #
+    #                                                            #
+    #                                                            #
+    #                          to be continued                   #
+    #                                                            #
+    #                                                            #
+    #                                                            #
+    #                                                            #
+    ##############################################################
 
 Dobry przykładem niech będzie wykonanie kwerendy typu `znajdź obiektu w promieniu` 1km dla zadanego aktualnego położenia `user_location`:
 {% highlight python %}
@@ -132,13 +150,13 @@ SomeGisDBBasedModel.objects.filter(
 WYMAGAINIA dla naszej demonstracyjnej aplikacji
 -----------------------------------------------
 
- Naszą demonstracyjną aplikację nazwijmy "FuckFinder", co w gruncie rzeczy dość dobrze oddaje filozofię Tindera ;) (Jest to prywatna opinia autora a nie oficjalne stanowisko firmy DaftCode).
+ Naszą demonstracyjną aplikację nazwijmy "FuckFinder", co w gruncie rzeczy dość dobrze oddaje filozofię Tindera (Jest to prywatna opinia autora a nie oficjalne stanowisko firmy DaftCode).
 
 W wersji minimalnej chcemy stworzyć:
 
 a) uproszczony model użytkownika aplikacji
 
-b) kluczowy widok odpowiadający za zwracanie osób z okolicy spełniających kryteria wieku, płci i przedewszystkim bycia w zadanym promieniu (wyrażonym w km) od aktualnej lokalizacji poszukującego oraz zwracający wyliczoną odległość.
+b) kluczowy widok odpowiadający za zwracanie osób spełniających kryteria wieku, płci i przedewszystkim bycia w zadanym promieniu (wyrażonym w km) od aktualnej lokalizacji poszukującego oraz zwracający wyliczoną odległość dla każdego z wyników.
 
 
 MODEL DANYCH:
@@ -307,17 +325,17 @@ By przetestować wydajność API musimy najpierw wygenerować sensowen dane, w t
 
 	python manage.py generate_1M_ff_users
 
-(skrypt [źródło](https://github.com/andilabs/fuckfinder/blob/master/api/management/commands/generate_1M_ff_users.py)) generuje 1M (milion) zrandomizowanych FuckFinderUsers wg następującego schematu losowań:
+[skrypt](https://github.com/andilabs/fuckfinder/blob/master/api/management/commands/generate_1M_ff_users.py) generuje 1M (milion) zrandomizowanych FuckFinderUsers wg następującego schematu:
 
 * last_location ustalamy losując wartości dla latitude, longitued z przedziału
-	* dla LAT 52.09 - 52.31
-	* dla LNG 20.87 - 21.17
+	* dla LAT **52.09 - 52.31**
+	* dla LNG **20.87 - 21.17**
 	![Space on which we generate points](/assets/map-points.png)
-* wiek wybierany losowo z przedziału 18-55,
-* do ustalenia desired_max, desired_min -age losujemy liczbę z 1, 2, 3, 5, 8, 13 i odpowiednio dodajemy lub odejmujemy od wieku użytkownika.
+* wiek wybierany losowo z przedziału **18-55**,
+* do ustalenia desired_max_age, desired_min_age losujemy liczbę z **1, 2, 3, 5, 8, 13** i odpowiednio dodajemy lub odejmujemy od wieku użytkownika.
 * płeć wybieramy z równym prawdopodbieństwem
-* orientacje seksualną (desired_sex) losujemy z rozkładem (hetero: 0.95, homo: 0.05)
-* preferowany promień losujemy z 5, 10, 15, 20, 25, 30
+* orientacje seksualną (desired_sex) losujemy z rozkładem (**hetero: 0.95, homo: 0.05**)
+* preferowany promień losujemy z **5, 10, 15, 20, 25, 30**
 
 Deterministycznie tworzymy pojedyńczego użytkownika:
 
@@ -327,9 +345,9 @@ Sprawdźmy jaki jest czas odpowiedzi i jak duży objętościowo jest zwrócona J
 
 	http://127.0.0.1:8000/api/fetch_fuckfinder_proposals_for/andi/52.22862/21.00195/
 
-Czas odpowiedzi to aż 45 sekund, a wielkość zwróconego JSON-a ponad 20MB. Jest to nieakceptowalne w przypadku urządzeń mobilnych zwłaszcza przy korzystaniu z sieci komórkowej a nie wifi.
+Czas odpowiedzi to aż 46 sekund, a wielkość zwróconego JSON-a ponad 20MB. Jest to nieakceptowalne w przypadku urządzeń mobilnych zwłaszcza przy korzystaniu z sieci komórkowej a nie wifi.
 
-Spróbujmy przeanalizować czy kolejność filtrowania ma znaczenie (płeć-wiek, geolokalizacja) vs (geolokalizacja, płeć-wiek). Jesteśmy w stanie oczędzić ok 3 sekund. To niewiele w skali 46sekund.
+Spróbujmy przeanalizować czy kolejność filtrowania ma znaczenie (płeć-wiek, geolokalizacja) vs (geolokalizacja, płeć-wiek). Jesteśmy w stanie oczędzić ok 3 sekund. To niewiele w skali 46 sekund.
 
 Spójrzmy na indeksy, które baza postanowiła ustalić sama z siebie:
 
@@ -370,7 +388,18 @@ Okazuje się, że dodając indeksy na wszystkie pola wcale nie poprawiamy wynik�
 
 Widzimy drobną poprawę dla kolejności: najpier płeć-wiek a potem geofiltrowanie, ale wciąż przesyłamy olbrzymiego JSON-a i trwa to ponad 40 sekund.
 
-Co możemy zrobić by poprawić wydajność API? Możemy wprowadzić paginację
+    ##############################################################
+    #                                                            #
+    #                                                            #
+    #                                                            #
+    #                          to be CHECKED and MESASURED       #
+    #                                                            #
+    #                                                            #
+    #                                                            #
+    #                                                            #
+    ##############################################################
+
+Co możemy zrobić by poprawić wydajność API? Możemy wprowadzić paginację wyników.
 
 PAGINACJA
 =========
@@ -418,7 +447,7 @@ def fetch_fuckfinder_proposals_for(request, nick_of_finder, current_latitude, cu
             finder_location,
             D(km=min(finder.prefered_radius, F('prefered_radius'))))
         ).distance(finder_location).order_by('distance')
-    # import ipdb; ipdb.set_trace()
+
     if finder.prefered_sex == finder.sex:
         # deal with homosexual
         candidates_inside_finder_radius_and_vice_versa = candidates.filter(
@@ -454,7 +483,7 @@ def fetch_fuckfinder_proposals_for(request, nick_of_finder, current_latitude, cu
     return Response(serializer.data)
 {% endhighlight %}
 
-Użycie paginacji wydaje się być niezwykle sensowne w przedstawionym problemie. Nawet ktoś bardzo zdeterminowany nie będzie chciał (w stanie) przejrzeć ponad 89,5k wyników. Przy paginacji ustawionej na 20 wyników udaje nam się zejśc z rozmiaru do drobnych 5KB a czas oczeikwania na odpowiedź wynosi poniżej 2 sekund!
+Użycie paginacji wydaje się być niezwykle sensowne w przedstawionym problemie. Nawet ktoś bardzo zdeterminowany nie będzie chciał (w stanie) przejrzeć ponad 89,5k wyników!!! Przy paginacji ustawionej na 20 wyników udaje nam się zejśc z rozmiaru do drobnych 5KB a czas oczeikwania na odpowiedź wynosi poniżej 2 sekund!
 
 Response zyskuje postać:
 {% highlight json %}
