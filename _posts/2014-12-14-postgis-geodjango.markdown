@@ -15,9 +15,9 @@ TECHNOLOGIE
 -----------
 Technologie z których skorzystamy:
 
-* GeoDjango (opakowujące zgrabnie bibliotekę GEOS)
-* PostGIS (rozszerzenie do bazy danych Postgres do GIS)
-* Django REST Framework (biblioteka wspierająca budowanie REST-owych API)
+* **GeoDjango (opakowujące zgrabnie bibliotekę GEOS)
+* **PostGIS (rozszerzenie do bazy danych Postgres do GIS)
+* **Django REST Framework (biblioteka wspierająca budowanie REST-owych API)
 
 DLACZEGO PostGIS?
 -----------------
@@ -71,10 +71,10 @@ Ostatecznie moglibyśmy też być dużo bardziej minimalistyczni w podejściu i 
 
 Rozwiązanie z pisaniem gołych SQL-i w Django wydaje się niezbyt eleganckie, a ich używanie  jest uznane za złą praktykę w Django. Co więcej przyklejamy się na stałe do jednej bazy i tracimy łatwość przesiadki na inną co daje nam ORM, z drugiej strony wybór GeoDjango to też pewne zawężenie w kontekście wyboru bazy - mamy do dyspozycji następujące backendy:
 
-* django.contrib.gis.db.backends.postgis,
-* django.contrib.gis.db.backends.mysql,
-* django.contrib.gis.db.backends.oracle,
-* django.contrib.gis.db.backends.spatialite,
+* django**.contrib.gis.db.backends.postgis,
+* django**.contrib.gis.db.backends.mysql,
+* django**.contrib.gis.db.backends.oracle,
+* django**.contrib.gis.db.backends.spatialite,
 
 ale za to dzięki wyboru GeoDjango dostajemy możliwość uniknięcia pisania raw-SQL-i, oraz dostajemy całe bogactwo klas i metod do działania na danych przestrzennych, o których kilka słów dalej.
 Wspomniane backendy bazodanowe w różnym stopniu wspierają poszczególne funckjonalności. Porównanie dostępności funckji można znaleźć [tutaj](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#compatibility-tables).
@@ -90,7 +90,7 @@ Jak już wspomnieliśmy dzięki skorzystaniu z GeoDjango otrzymujemy dostęp do 
 
 Zacznijmy od dostępnych typów danych do przechowywania:
 
-- **PointField** - przechowuje standardowe współrzędne (długość, szerokośc) geograficzną. Być może Tobie również ta kolejność inicjalizowania punktu: najpierw długość (longitude) a potem szerokość (latitude) nie wydaje się naturalna, ale to właśnie kolejność jakiej oczekuje od nas GeoDjango (łatwo o banalaną pomyłkę). 
+- **PointField** **- przechowuje standardowe współrzędne (długość, szerokośc) geograficzną. Być może Tobie również ta kolejność inicjalizowania punktu: najpierw długość (longitude) a potem szerokość (latitude) nie wydaje się naturalna, ale to właśnie kolejność jakiej oczekuje od nas GeoDjango (łatwo o banalaną pomyłkę). 
 
 Floaty reprezentujące wartości są przechowywane w dwuelementowej krotce dostępnej przez:
 
@@ -106,17 +106,17 @@ ze stringa:
 
 	last_location = 'POINT(21.006841063502, 52.245934009551)'
 
-- **PolygonField** - umożliwia przechowywanie wielokątów. Idealny do zaznaczania obszarów w przestrzeni.
+- **PolygonField** **- umożliwia przechowywanie wielokątów. Idealny do zaznaczania obszarów w przestrzeni.
 
-- **LineStringField** - przechowuje punkty połączone linią. Idealny do zaznaczania dróg, scieżek, tras na mapach. 
+- **LineStringField** **- przechowuje punkty połączone linią. Idealny do zaznaczania dróg, scieżek, tras na mapach. 
 
-- **MultiPointField** - struktura, która przechowuje wiele nie powiązanych punktów.
+- **MultiPointField** **- struktura, która przechowuje wiele nie powiązanych punktów.
 
-- **MultiLineStringField** - struktura do przechowywania 0 lub więcej obiektów typu LineStringField
+- **MultiLineStringField** **- struktura do przechowywania 0 lub więcej obiektów typu LineStringField
 
-- **MultiPolygonField** - struktura do przechowywania 0 lub więcej obiektów typu PolygonField.
+- **MultiPolygonField** **- struktura do przechowywania 0 lub więcej obiektów typu PolygonField.
 
-- **GeometryCollectionField** - kolekcja do przechocywania obiektów zróżnicowanego typu (Poly, points, etc).
+- **GeometryCollectionField** **- kolekcja do przechocywania obiektów zróżnicowanego typu (Poly, points, etc).
 
 Warto zauważyć, że rejestrując w djangowym adminie model zawierający geoprzestrzenne typy danych otrzymujemy wsparcie w postaci prostych mapowych widgetów na których możemy zaznaczyć punkt, wielokąt, krzywą. Niestety defaultowo backend ten nie wykorzystuje Google Maps, a mapy dla Polski są dość biedne. Istniej możliwość zastąpienia defaultowych map, mapami Google używając np. tej biblioteki [django-google-maps](https://pypi.python.org/pypi/django-google-maps/0.2.1)
 
@@ -126,18 +126,71 @@ Kolejnym ważnym elementem są zasoby modułu: `django.contrib.gis.measure` umo�
 
 [GeoQuerySet API Reference](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#geoqueryset-api-reference):
 
-GeoDjango docenimy na prawdę korzystając z [spatial lookups](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#spatial-lookups) umożliwiającego bardzo bogate możliwości filtrowania danych geoprzestrzennych. Poniżej krótka lista i możliwości poszczególnych metod:
+GeoDjango docenimy na prawdę korzystając z [spatial lookups](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#spatial-lookups) i [distance lookups](https://docs.djangoproject.com/en/1.7/ref/contrib/gis/geoquerysets/#distance-lookups) umożliwiających bardzo bogate możliwości filtrowania danych geoprzestrzennych. Poniżej krótka lista i możliwości poszczególnych metod aplikowalnych do pól klasy [GeometryField](https://docs.djangoproject.com/en/dev/ref/contrib/gis/model-api/#geometryfield):
 
-    ##############################################################
-    #                                                            #
-    #                                                            #
-    #                                                            #
-    #                          to be continued                   #
-    #                                                            #
-    #                                                            #
-    #                                                            #
-    #                                                            #
-    ##############################################################
+dla jasności przykładów załóżmy, że mamy następująco zdefiniowaną klasę reprezentującą obszary kodu pocztowego w postaci wielokątu (PolygonField):
+
+    from django.contrib.gis.db import models
+
+    class Zipcode(models.Model):
+        code = models.CharField(max_length=5)
+        poly = models.PolygonField()
+        objects = models.GeoManager()
+
+a) spatial:
+
+* **bbcontains** - sprawdzenie czy obwiednia obiektu (tu: poly) całkowicie zawiera obwiednie obiektu zadanego jako argument (tu: geom)
+
+      Zipcode.objects.filter(poly__bbcontains=geom)
+
+* **bboverlaps** - sprawdzenie czy obiekty mają część wspólną
+
+      Zipcode.objects.filter(poly__bboverlaps=geom)
+
+
+* **contained** - sprawdzenie czy obwiednia obiektu zaiwera się w całości w obwiedni obiektu zadanego jako argument
+
+      Zipcode.objects.filter(poly__contained=geom)
+
+* **contains** - sprawdza czy obiekt przestrzenie zawiera obiekt zadany jako argument. Używany jest ST_contains z PostGIS poniżej przykłady i link do dokumentacji. ![Przyklady dla ST_Contains](/assets/ST_Contains_examples.png) źródło: [http://postgis.refractions.net/documentation/manual-1.4/ST_Contains.html](http://postgis.refractions.net/documentation/manual-1.4/ST_Contains.html)
+
+* **contains_properly** - zwraca true tylko gdy dla zadanego jako argument obiektu mamy do czynienia z zawieraniem się we wnętrzu obiektu ale nie jego krawędziach.
+
+* **coverdby** - sprawdza czy żaden punkt zadanego obiektu (geom) nie leży poza przeszukiwanym obiektem (poly)
+
+* **covers** - sprawdza czy żaden punkt przeszukiwanego obiektu (poly) nie jest poza zadanym obiektem (geom)
+
+* **crosses** - sprawdza czy przeszukiwany obiekt (poly) przecina zadany obiekt (geom)
+
+* **disjoint** - sprawdza czy obiekty są przestrzennie rozłączne
+
+* **equals**
+* **exact, same_as**
+
+* **intersects** - sprawdza czy obiekty mają przestrzenie część wspólną
+
+* **overlaps** -
+
+* **relate** - 
+
+* **touches** -
+
+* **within** -
+* **left** -
+* **right** -
+* **overlaps_left** -
+* **overlaps_right** -
+* **overlaps_above** -
+* **overlaps_below** -
+* **strictly_above** -
+* **strictly_below** -
+
+b) distance:
+
+* **distance_gt** -
+* **distance_gte** -
+* **distance_lt** -
+* **distance_lte** -
 
 Dobry przykładem niech będzie wykonanie kwerendy typu `znajdź obiektu w promieniu` 1km dla zadanego aktualnego położenia `user_location`:
 {% highlight python %}
@@ -145,6 +198,8 @@ SomeGisDBBasedModel.objects.filter(
     some_pointfield__distance_lte=(user_location, D(km=1))
     ).distance(user_location).order_by('distance')
 {% endhighlight %}
+
+* dwithin**
 
 
 WYMAGAINIA dla naszej demonstracyjnej aplikacji
@@ -327,15 +382,15 @@ By przetestować wydajność API musimy najpierw wygenerować sensowen dane, w t
 
 [skrypt](https://github.com/andilabs/fuckfinder/blob/master/api/management/commands/generate_1M_ff_users.py) generuje 1M (milion) zrandomizowanych FuckFinderUsers wg następującego schematu:
 
-* last_location ustalamy losując wartości dla latitude, longitued z przedziału
-	* dla LAT **52.09 - 52.31**
-	* dla LNG **20.87 - 21.17**
+* last_location** ustalamy losując wartości dla latitude, longitued z przedziału
+	* dla** LAT **52.09 - 52.31**
+	* dla** LNG **20.87 - 21.17**
 	![Space on which we generate points](/assets/map-points.png)
-* wiek wybierany losowo z przedziału **18-55**,
-* do ustalenia desired_max_age, desired_min_age losujemy liczbę z **1, 2, 3, 5, 8, 13** i odpowiednio dodajemy lub odejmujemy od wieku użytkownika.
-* płeć wybieramy z równym prawdopodbieństwem
-* orientacje seksualną (desired_sex) losujemy z rozkładem (**hetero: 0.95, homo: 0.05**)
-* preferowany promień losujemy z **5, 10, 15, 20, 25, 30**
+* wiek** wybierany losowo z przedziału **18-55**,
+* do** ustalenia desired_max_age, desired_min_age losujemy liczbę z **1, 2, 3, 5, 8, 13** i** odpowiednio dodajemy lub odejmujemy od wieku użytkownika.
+* p**łeć wybieramy z równym prawdopodbieństwem
+* orientacje** seksualną (desired_sex) losujemy z rozkładem (**hetero: 0.95, homo: 0.05**)
+* preferowany** promień losujemy z **5, 10, 15, 20, 25, 30**
 
 Deterministycznie tworzymy pojedyńczego użytkownika:
 
@@ -521,8 +576,9 @@ Pełen kod projektu znajdziesz w tym repo:
 DALSZE INFORMACJE
 ====
 
-* [stackexchange dla GIS](http://gis.stackexchange.com/)
-* [GeoDjango Database API](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#)
-* [Geometry Field Types](https://docs.djangoproject.com/en/dev/ref/contrib/gis/model-api/#django.contrib.gis.db.models.GeometryField)
-* [GeoQuerySet API Reference](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#geoqueryset-api-reference)
-* [postgis](http://postgis.net/)
+* **[stackexchange dla GIS](http://gis.stackexchange.com/)
+* **[GeoDjango Database API](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#)
+* **[Geometry Field Types](https://docs.djangoproject.com/en/dev/ref/contrib/gis/model-api/#django.contrib.gis.db.models.GeometryField)
+* **[GeoQuerySet API Reference](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#geoqueryset-api-reference)
+* **[postgis](http://postgis.net/)
+* **[subtele differences in lookup methods](http://lin-ear-th-inking.blogspot.com/2007/06/subtleties-of-ogc-covers-spatial.html)
