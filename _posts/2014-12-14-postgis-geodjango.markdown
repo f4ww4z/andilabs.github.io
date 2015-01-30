@@ -9,20 +9,20 @@ categories: django devops tools postgres postgis
 WSTĘP
 -----
 
-W tym wpisie pokaże Wam jak przygotować fragment backend do aplikacji mobilnej wykorzstującej dane geoprzestrzenne. Zamiast demonstrować sztampowy przykład jak znajdowanie np. kawiarni, czy knajp w okolicy spróbujemy napisać kawałek backendu aplikacji typu [Tinder](http://en.wikipedia.org/wiki/Tinder_(application)).
+W tym wpisie pokaże Wam jak przygotować fragment backendu do aplikacji mobilnej wykorzstującej dane geoprzestrzenne. Zamiast demonstrować sztampowy przykład jak znajdowanie np. kawiarni, czy knajp w okolicy spróbujemy napisać kawałek backendu aplikacji typu [Tinder](http://en.wikipedia.org/wiki/Tinder_(application)).
 
 TECHNOLOGIE
 -----------
 Technologie z których skorzystamy:
 
-* **GeoDjango (opakowujące zgrabnie bibliotekę GEOS)
-* **PostGIS (rozszerzenie do bazy danych Postgres do GIS)
-* **Django REST Framework (biblioteka wspierająca budowanie REST-owych API)
+* **GeoDjango** (opakowujące zgrabnie bibliotekę GEOS)
+* **PostGIS** (rozszerzenie do bazy danych Postgres do GIS)
+* **Django REST Framework** (biblioteka wspierająca budowanie REST-owych API)
 
 DLACZEGO PostGIS?
 -----------------
 
-Teoretycznie rzecz biorąc moglibyśmy przechowywać w właściwie dowolnej bazie współrzędne i wykonywać kwerendę typu find-nearby korzystając z uiwersalnej formuły [Haversine](http://en.wikipedia.org/wiki/Haversine_formula), przykład konfrontujący djangowy widok wykorzystujący raw_sql do MySQL vs z djangowy widok z użyciem GeoDjango:
+Teoretycznie rzecz biorąc moglibyśmy przechowywać w właściwie dowolnej bazie współrzędne i wykonywać kwerendę typu find-nearby korzystając z uiwersalnej formuły [Haversine](http://en.wikipedia.org/wiki/Haversine_formula). Poniżej prezentuje przykłady konfrontujące djangowy widok wykorzystujący raw_sql na bazie MySQL vs z djangowym widokiem z użyciem GeoDjango:
 
 {% highlight python %}
 def nearby_spots_haversine(request, lat, lng, radius=5000, limit=50):
@@ -67,19 +67,22 @@ def nearby_spots_postgis(request, lat, lng, radius=5000, limit=50):
     return JSONResponse(serializer.data)
 {% endhighlight %}
 
-Ostatecznie moglibyśmy też być dużo bardziej minimalistyczni w podejściu i pomijąc takie niuanse jak krzywizna ziemi (co w konkretnych przypadakch - szukanie punktów w promieniu kilku kilometrów nie wiąże się ze znacznym błędem) podejść do tematu np. tak jak w pokazanej przez autora [odpowiedzi na SO](http://stackoverflow.com/questions/17682201/how-to-filter-a-django-model-with-latitude-and-longitude-coordinates-that-fall-w/21429344#21429344) czyli zwyczajnie odfiltrować obiekty z bazy wpadające w pewien przedział szerokości i długości geograficznej, którcyh przecięcia wyznaczają kwadrat (na poziomie filtrowania db) i zwrócić punkty należący wyłącznie do okręgu wpisanego w ten kwadrat (odfiltrowanie w kodzie pythona).
+Ostatecznie moglibyśmy też być dużo bardziej minimalistyczni w podejściu i pomijąc takie niuanse jak krzywizna ziemi (co w konkretnych przypadakch - szukanie punktów w promieniu kilku kilometrów nie wiąże się ze znacznym błędem) podejść do tematu np. tak jak w pokazanej przez autora [odpowiedzi na SO](http://stackoverflow.com/questions/17682201/how-to-filter-a-django-model-with-latitude-and-longitude-coordinates-that-fall-w/21429344#21429344) czyli zwyczajnie odfiltrować obiekty z bazy wpadające w pewien przedział szerokości i długości geograficznej, którcyh przecięcia wyznaczają kwadrat (na poziomie filtrowania bazy danych) i zwrócić punkty należący wyłącznie do okręgu wpisanego w ten kwadrat (dalsze odfiltrowanie już w kodzie pythona).
 
 Rozwiązanie z pisaniem gołych SQL-i w Django wydaje się niezbyt eleganckie, a ich używanie  jest uznane za złą praktykę w Django. Co więcej przyklejamy się na stałe do jednej bazy i tracimy łatwość przesiadki na inną co daje nam ORM, z drugiej strony wybór GeoDjango to też pewne zawężenie w kontekście wyboru bazy - mamy do dyspozycji następujące backendy:
 
-* django**.contrib.gis.db.backends.postgis,
-* django**.contrib.gis.db.backends.mysql,
-* django**.contrib.gis.db.backends.oracle,
-* django**.contrib.gis.db.backends.spatialite,
+* django.contrib.gis.db.backends.postgis,
+* django.contrib.gis.db.backends.mysql,
+* django.contrib.gis.db.backends.oracle,
+* django.contrib.gis.db.backends.spatialite,
 
 ale za to dzięki wyboru GeoDjango dostajemy możliwość uniknięcia pisania raw-SQL-i, oraz dostajemy całe bogactwo klas i metod do działania na danych przestrzennych, o których kilka słów dalej.
+
 Wspomniane backendy bazodanowe w różnym stopniu wspierają poszczególne funckjonalności. Porównanie dostępności funckji można znaleźć [tutaj](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#compatibility-tables).
 
-Dlaczego wybieramy PostGIS? Bo ma najszersze wsparcie dla funkcjonalności GeoDjango i pozostajemy przy naszym ulubionym do djangodevelopmentu Postgresie.
+**Dlaczego wybieramy PostGIS?**
+
+Bo ma najszersze wsparcie dla funkcjonalności GeoDjango i pozostajemy przy naszym ulubionym do djangodevelopmentu Postgresie.
 
 GeoDjango - BOGACTWO
 --------------------
@@ -90,7 +93,7 @@ Jak już wspomnieliśmy dzięki skorzystaniu z GeoDjango otrzymujemy dostęp do 
 
 Zacznijmy od dostępnych typów danych do przechowywania:
 
-- **PointField** **- przechowuje standardowe współrzędne (długość, szerokośc) geograficzną. Być może Tobie również ta kolejność inicjalizowania punktu: najpierw długość (longitude) a potem szerokość (latitude) nie wydaje się naturalna, ale to właśnie kolejność jakiej oczekuje od nas GeoDjango (łatwo o banalaną pomyłkę). 
+- **PointField** - przechowuje standardowe współrzędne (długość, szerokośc) geograficzną. Być może Tobie również ta kolejność inicjalizowania punktu: najpierw długość (longitude) a potem szerokość (latitude) nie wydaje się naturalna, ale to właśnie kolejność jakiej oczekuje od nas GeoDjango (łatwo o banalaną pomyłkę). 
 
 Floaty reprezentujące wartości są przechowywane w dwuelementowej krotce dostępnej przez:
 
@@ -106,17 +109,17 @@ ze stringa:
 
 	last_location = 'POINT(21.006841063502, 52.245934009551)'
 
-- **PolygonField** **- umożliwia przechowywanie wielokątów. Idealny do zaznaczania obszarów w przestrzeni.
+- **PolygonField** - umożliwia przechowywanie wielokątów. Idealny do zaznaczania obszarów w przestrzeni.
 
-- **LineStringField** **- przechowuje punkty połączone linią. Idealny do zaznaczania dróg, scieżek, tras na mapach. 
+- **LineStringField** - przechowuje punkty połączone linią. Idealny do zaznaczania dróg, scieżek, tras na mapach. 
 
-- **MultiPointField** **- struktura, która przechowuje wiele nie powiązanych punktów.
+- **MultiPointField** - struktura, która przechowuje wiele nie powiązanych punktów.
 
-- **MultiLineStringField** **- struktura do przechowywania 0 lub więcej obiektów typu LineStringField
+- **MultiLineStringField** - struktura do przechowywania 0 lub więcej obiektów typu LineStringField
 
-- **MultiPolygonField** **- struktura do przechowywania 0 lub więcej obiektów typu PolygonField.
+- **MultiPolygonField** - struktura do przechowywania 0 lub więcej obiektów typu PolygonField.
 
-- **GeometryCollectionField** **- kolekcja do przechocywania obiektów zróżnicowanego typu (Poly, points, etc).
+- **GeometryCollectionField** - kolekcja do przechocywania obiektów zróżnicowanego typu (Poly, points, etc).
 
 Warto zauważyć, że rejestrując w djangowym adminie model zawierający geoprzestrzenne typy danych otrzymujemy wsparcie w postaci prostych mapowych widgetów na których możemy zaznaczyć punkt, wielokąt, krzywą. Niestety defaultowo backend ten nie wykorzystuje Google Maps, a mapy dla Polski są dość biedne. Istniej możliwość zastąpienia defaultowych map, mapami Google używając np. tej biblioteki [django-google-maps](https://pypi.python.org/pypi/django-google-maps/0.2.1)
 
@@ -137,7 +140,7 @@ dla jasności przykładów załóżmy, że mamy następująco zdefiniowaną klas
         poly = models.PolygonField()
         objects = models.GeoManager()
 
-a) spatial:
+a) **wyszukiwanie przestrzenne operujące na ustalaniu relacji wzajemnego położenia obiektów** ([spatial lookups](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#spatial-lookups)):
 
 * **bbcontains** - sprawdzenie czy obwiednia obiektu (tu: poly) całkowicie zawiera obwiednie obiektu zadanego jako argument (tu: geom)
 
@@ -169,28 +172,36 @@ a) spatial:
 
 * **intersects** - sprawdza czy obiekty mają przestrzenie część wspólną
 
-* **overlaps** -
+* **overlaps**
 
-* **relate** - 
+* **relate** - sprawdza czy obiekt jest przestrzennie powiązany z innym obiektem dla zadanego wzorca.
 
-* **touches** -
+* **touches** - sprawdza czy obiekt przestrzennie posiada kontakt z innym obiektem
 
-* **within** -
-* **left** -
-* **right** -
-* **overlaps_left** -
-* **overlaps_right** -
-* **overlaps_above** -
-* **overlaps_below** -
-* **strictly_above** -
-* **strictly_below** -
+* **within** - sprawdza czy obiekt przestrzennie zawiera się w innym obiekcie
 
-b) distance:
+* **left** - sprawdza czy obwiednia obiektu jest dokładnie na lewo od obwiedni innego obiektu.
 
-* **distance_gt** -
-* **distance_gte** -
-* **distance_lt** -
-* **distance_lte** -
+* **right** - sprawdza czy obwiednia obiektu jest dokładnie na prawo od obwiedni innego obiektu.
+
+* **overlaps_left** - sprawdza czy obwiednia obiektu nakłada się lub jest na lewo od obwiedni innego obiektu.
+
+* **overlaps_right** - sprawdza czy obwiednia obiektu nakłada się lub jest na prawo od obwiedni innego obiektu.
+
+* **overlaps_above** - sprawdza czy obwiednia obiektu nakłada się lub jest powyżej obwiedni innego obiektu.
+
+* **overlaps_below** - sprawdza czy obwiednia obiektu nakłada się lub jest poniżej obwiedni innego obiektu.
+
+* **strictly_above** - sprawdza czy obwiednia obiektu jest dokładnie powyżej obwiedni innego obiektu.
+
+* **strictly_below** - sprawdza czy obwiednia obiektu jest dokładnie poniżej obwiedni innego obiektu.
+
+b) **wyszukiwanie oparujące na odlełgości pomiędzy obiektami** ([distance lookups](https://docs.djangoproject.com/en/1.7/ref/contrib/gis/geoquerysets/#distance-lookups)):
+
+* **distance_gt** - zwraca obiekty dla których dystans do zadanego jako argument wyszukiwania obiektu jest **większy** niż zadana wartość.
+* **distance_gte** - zwraca obiekty dla których dystans do zadanego jako argument wyszukiwania obiektu jest **większy lub równy** niż zadana wartość.
+* **distance_lt** - zwraca obiekty dla których dystans do zadanego jako argument wyszukiwania obiektu jest **mniejszy** niż zadana wartość.
+* **distance_lte** - zwraca obiekty dla których dystans do zadanego jako argument wyszukiwania obiektu jest **mniejszy lub równy** niż zadana wartość.
 
 Dobry przykładem niech będzie wykonanie kwerendy typu `znajdź obiektu w promieniu` 1km dla zadanego aktualnego położenia `user_location`:
 {% highlight python %}
@@ -199,7 +210,9 @@ SomeGisDBBasedModel.objects.filter(
     ).distance(user_location).order_by('distance')
 {% endhighlight %}
 
-* dwithin**
+* **dwithin** - zwraca obiekty dla których odległość od zadanego jako argment wyszukiwaniu obiektu jest w zasięgu zadanego **D**ystansu.
+
+**dwithin** w istocie działa bardzo podobnie do **distance_lt** ale zwracają różne SQL i mają rózną efektywność (dwithin mocniej korzysta z geoindeksów przez co jest szybszy)- więcej można przeczytać [tutaj](http://stackoverflow.com/questions/2235043/geodjango-difference-between-dwithin-and-distance-lt) i [tutaj](http://stackoverflow.com/questions/7845133/how-can-i-query-all-my-data-within-a-distance-of-5-meters)
 
 
 WYMAGAINIA dla naszej demonstracyjnej aplikacji
@@ -382,15 +395,15 @@ By przetestować wydajność API musimy najpierw wygenerować sensowen dane, w t
 
 [skrypt](https://github.com/andilabs/fuckfinder/blob/master/api/management/commands/generate_1M_ff_users.py) generuje 1M (milion) zrandomizowanych FuckFinderUsers wg następującego schematu:
 
-* last_location** ustalamy losując wartości dla latitude, longitued z przedziału
-	* dla** LAT **52.09 - 52.31**
-	* dla** LNG **20.87 - 21.17**
+* **last_location** ustalamy losując wartości dla latitude, longitued z przedziału
+	* dla LAT **52.09 - 52.31**
+	* dla LNG **20.87 - 21.17**
 	![Space on which we generate points](/assets/map-points.png)
-* wiek** wybierany losowo z przedziału **18-55**,
-* do** ustalenia desired_max_age, desired_min_age losujemy liczbę z **1, 2, 3, 5, 8, 13** i** odpowiednio dodajemy lub odejmujemy od wieku użytkownika.
-* p**łeć wybieramy z równym prawdopodbieństwem
-* orientacje** seksualną (desired_sex) losujemy z rozkładem (**hetero: 0.95, homo: 0.05**)
-* preferowany** promień losujemy z **5, 10, 15, 20, 25, 30**
+* **wiek** wybierany losowo z przedziału **18-55**,
+* **do** ustalenia desired_max_age, desired_min_age losujemy liczbę z **1, 2, 3, 5, 8, 13** i odpowiednio dodajemy lub odejmujemy od wieku użytkownika.
+* **płeć** wybieramy z równym prawdopodbieństwem
+* **orientacje** seksualną (desired_sex) losujemy z rozkładem (**hetero: 0.95, homo: 0.05**)
+* **preferowany** promień losujemy z **5, 10, 15, 20, 25, 30**
 
 Deterministycznie tworzymy pojedyńczego użytkownika:
 
@@ -404,7 +417,7 @@ Czas odpowiedzi to aż 46 sekund, a wielkość zwróconego JSON-a ponad 20MB. Je
 
 Spróbujmy przeanalizować czy kolejność filtrowania ma znaczenie (płeć-wiek, geolokalizacja) vs (geolokalizacja, płeć-wiek). Jesteśmy w stanie oczędzić ok 3 sekund. To niewiele w skali 46 sekund.
 
-Spójrzmy na indeksy, które baza postanowiła ustalić sama z siebie:
+Spójrzmy na automatycznie utworzone indeksy:
 
 	fuckfinder_db=# \d+ api_fuckfinderuser
 	(...)
@@ -414,7 +427,7 @@ Spójrzmy na indeksy, które baza postanowiła ustalić sama z siebie:
 	    "api_fuckfinderuser_last_location_id" gist (last_location)
 	Has OIDs: no
 
-Spróbujmy dodać indeksy na pozostałe pola
+Spróbujmy dodać indeksy na pozostałe pola:
 
 	fuckfinder_db=# fuckfinder_db=# \d+ api_fuckfinderuser
 	(...)
@@ -442,17 +455,6 @@ Okazuje się, że dodając indeksy na wszystkie pola wcale nie poprawiamy wynik�
 	Has OIDs: no
 
 Widzimy drobną poprawę dla kolejności: najpier płeć-wiek a potem geofiltrowanie, ale wciąż przesyłamy olbrzymiego JSON-a i trwa to ponad 40 sekund.
-
-    ##############################################################
-    #                                                            #
-    #                                                            #
-    #                                                            #
-    #                          to be CHECKED and MESASURED       #
-    #                                                            #
-    #                                                            #
-    #                                                            #
-    #                                                            #
-    ##############################################################
 
 Co możemy zrobić by poprawić wydajność API? Możemy wprowadzić paginację wyników.
 
@@ -538,7 +540,7 @@ def fetch_fuckfinder_proposals_for(request, nick_of_finder, current_latitude, cu
     return Response(serializer.data)
 {% endhighlight %}
 
-Użycie paginacji wydaje się być niezwykle sensowne w przedstawionym problemie. Nawet ktoś bardzo zdeterminowany nie będzie chciał (w stanie) przejrzeć ponad 89,5k wyników!!! Przy paginacji ustawionej na 20 wyników udaje nam się zejśc z rozmiaru do drobnych 5KB a czas oczeikwania na odpowiedź wynosi poniżej 2 sekund!
+Użycie paginacji wydaje się być niezwykle sensowne w przedstawionym problemie. Nawet ktoś bardzo zdeterminowany nie będzie chciał (w stanie) przejrzeć ponad 89,5k wyników!!! Przy paginacji ustawionej na 20 wyników udaje nam się zejśc z rozmiaru 20MB do drobnych 5KB a czas oczeikwania na odpowiedź wynosi poniżej 2 sekund!
 
 Response zyskuje postać:
 {% highlight json %}
@@ -576,9 +578,9 @@ Pełen kod projektu znajdziesz w tym repo:
 DALSZE INFORMACJE
 ====
 
-* **[stackexchange dla GIS](http://gis.stackexchange.com/)
-* **[GeoDjango Database API](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#)
-* **[Geometry Field Types](https://docs.djangoproject.com/en/dev/ref/contrib/gis/model-api/#django.contrib.gis.db.models.GeometryField)
-* **[GeoQuerySet API Reference](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#geoqueryset-api-reference)
-* **[postgis](http://postgis.net/)
-* **[subtele differences in lookup methods](http://lin-ear-th-inking.blogspot.com/2007/06/subtleties-of-ogc-covers-spatial.html)
+* [stackexchange dla GIS](http://gis.stackexchange.com/)
+* [GeoDjango Database API](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#)
+* [Geometry Field Types](https://docs.djangoproject.com/en/dev/ref/contrib/gis/model-api/#django.contrib.gis.db.models.GeometryField)
+* [GeoQuerySet API Reference](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#geoqueryset-api-reference)
+* [postgis](http://postgis.net/)
+* [subtele differences in lookup methods](http://lin-ear-th-inking.blogspot.com/2007/06/subtleties-of-ogc-covers-spatial.html)
