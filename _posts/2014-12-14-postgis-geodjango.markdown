@@ -157,20 +157,37 @@ a) **wyszukiwanie przestrzenne operujące na ustalaniu relacji wzajemnego poło�
 
 * **contains** - sprawdza czy obiekt przestrzenie zawiera obiekt zadany jako argument. Używany jest ST_contains z PostGIS poniżej przykłady i link do dokumentacji. ![Przyklady dla ST_Contains](/assets/ST_Contains_examples.png) źródło: [http://postgis.refractions.net/documentation/manual-1.4/ST_Contains.html](http://postgis.refractions.net/documentation/manual-1.4/ST_Contains.html)
 
+
+      Zipcode.objects.filter(poly__contains=geom)
+
+
 * **contains_properly** - zwraca true tylko gdy dla zadanego jako argument obiektu mamy do czynienia z zawieraniem się we wnętrzu obiektu ale nie jego krawędziach.
+
+      Zipcode.objects.filter(poly__contains_properly=geom)
 
 * **coverdby** - sprawdza czy żaden punkt zadanego obiektu (geom) nie leży poza przeszukiwanym obiektem (poly)
 
+      Zipcode.objects.filter(poly__coveredby=geom)
+
 * **covers** - sprawdza czy żaden punkt przeszukiwanego obiektu (poly) nie jest poza zadanym obiektem (geom)
+
+      Zipcode.objects.filter(poly__covers=geom)
 
 * **crosses** - sprawdza czy przeszukiwany obiekt (poly) przecina zadany obiekt (geom)
 
+      Zipcode.objects.filter(poly__crosses=geom)
+
 * **disjoint** - sprawdza czy obiekty są przestrzennie rozłączne
 
+      Zipcode.objects.filter(poly__disjoint=geom)
+
 * **equals**
+
 * **exact, same_as**
 
 * **intersects** - sprawdza czy obiekty mają przestrzenie część wspólną
+
+      Zipcode.objects.filter(poly__intersects=geom)
 
 * **overlaps**
 
@@ -178,41 +195,68 @@ a) **wyszukiwanie przestrzenne operujące na ustalaniu relacji wzajemnego poło�
 
 * **touches** - sprawdza czy obiekt przestrzennie posiada kontakt z innym obiektem
 
+      Zipcode.objects.filter(poly__touches=geom)
+
 * **within** - sprawdza czy obiekt przestrzennie zawiera się w innym obiekcie
+
+      Zipcode.objects.filter(poly__within=geom)
 
 * **left** - sprawdza czy obwiednia obiektu jest dokładnie na lewo od obwiedni innego obiektu.
 
+      Zipcode.objects.filter(poly__left=geom)
+
 * **right** - sprawdza czy obwiednia obiektu jest dokładnie na prawo od obwiedni innego obiektu.
+
+      Zipcode.objects.filter(poly__right=geom)
 
 * **overlaps_left** - sprawdza czy obwiednia obiektu nakłada się lub jest na lewo od obwiedni innego obiektu.
 
+      Zipcode.objects.filter(poly__overlaps_left=geom)
+
 * **overlaps_right** - sprawdza czy obwiednia obiektu nakłada się lub jest na prawo od obwiedni innego obiektu.
+
+      Zipcode.objects.filter(poly__overlaps_right=geom)
 
 * **overlaps_above** - sprawdza czy obwiednia obiektu nakłada się lub jest powyżej obwiedni innego obiektu.
 
+      Zipcode.objects.filter(poly__overlaps_above=geom)
+
 * **overlaps_below** - sprawdza czy obwiednia obiektu nakłada się lub jest poniżej obwiedni innego obiektu.
+
+      Zipcode.objects.filter(poly__overlaps_below=geom)
 
 * **strictly_above** - sprawdza czy obwiednia obiektu jest dokładnie powyżej obwiedni innego obiektu.
 
+      Zipcode.objects.filter(poly__strictly_above=geom)
+
 * **strictly_below** - sprawdza czy obwiednia obiektu jest dokładnie poniżej obwiedni innego obiektu.
+
+      Zipcode.objects.filter(poly__strictly_below=geom)
 
 b) **wyszukiwanie oparujące na odlełgości pomiędzy obiektami** ([distance lookups](https://docs.djangoproject.com/en/1.7/ref/contrib/gis/geoquerysets/#distance-lookups)):
 
 * **distance_gt** - zwraca obiekty dla których dystans do zadanego jako argument wyszukiwania obiektu jest **większy** niż zadana wartość.
+
+      Zipcode.objects.filter(poly__distance_gt=(geom, D(m=5)))
+
 * **distance_gte** - zwraca obiekty dla których dystans do zadanego jako argument wyszukiwania obiektu jest **większy lub równy** niż zadana wartość.
+
+      Zipcode.objects.filter(poly__distance_gte=(geom, D(m=5)))
+
 * **distance_lt** - zwraca obiekty dla których dystans do zadanego jako argument wyszukiwania obiektu jest **mniejszy** niż zadana wartość.
+
+      Zipcode.objects.filter(poly__distance_lt=(geom, D(m=5)))
+
 * **distance_lte** - zwraca obiekty dla których dystans do zadanego jako argument wyszukiwania obiektu jest **mniejszy lub równy** niż zadana wartość.
 
-Dobry przykładem niech będzie wykonanie kwerendy typu `znajdź obiektu w promieniu` 1km dla zadanego aktualnego położenia `user_location`:
-{% highlight python %}
-SomeGisDBBasedModel.objects.filter(
-    some_pointfield__distance_lte=(user_location, D(km=1))
-    ).distance(user_location).order_by('distance')
-{% endhighlight %}
+      Zipcode.objects.filter(poly__distance_lte=(geom, D(m=5)))
 
 * **dwithin** - zwraca obiekty dla których odległość od zadanego jako argment wyszukiwaniu obiektu jest w zasięgu zadanego **D**ystansu.
 
+      Zipcode.objects.filter(poly__dwithin=(geom, D(m=5)))
+
 **dwithin** w istocie działa bardzo podobnie do **distance_lt** ale zwracają różne SQL i mają rózną efektywność (dwithin mocniej korzysta z geoindeksów przez co jest szybszy)- więcej można przeczytać [tutaj](http://stackoverflow.com/questions/2235043/geodjango-difference-between-dwithin-and-distance-lt) i [tutaj](http://stackoverflow.com/questions/7845133/how-can-i-query-all-my-data-within-a-distance-of-5-meters)
+
 
 
 WYMAGAINIA dla naszej demonstracyjnej aplikacji
