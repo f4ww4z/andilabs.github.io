@@ -21,8 +21,8 @@ TECHNOLOGY STACK
 WHY PostGIS?
 -----------------
 
-Teoretically we could use any database for storing latitude and longitude and make nearby-queries using universal mathematical formula known as [Haversine formula](http://en.wikipedia.org/wiki/Haversine_formula).
-Below I present two django views. First uses standard MySQL database (but in fact it could be any offering basic math like cos, sin) and the second one make use of GeoDjango (with PostGIS behind):
+Teoretically we could use any database for storing the latitude and longitude and make nearby-queries using universal mathematical formula known as [Haversine formula](http://en.wikipedia.org/wiki/Haversine_formula).
+Below I present two django views. The first uses a standard MySQL database (but in fact it could be any database offering the basic math like cos, sin) and the second one makes use of GeoDjango (with PostGIS behind):
 
 {% highlight python %}
 def nearby_spots_haversine(request, lat, lng, radius=5000, limit=50):
@@ -67,30 +67,30 @@ def nearby_spots_postgis(request, lat, lng, radius=5000, limit=50):
     return JSONResponse(serializer.data)
 {% endhighlight %}
 
-Well, we could use even more minimalistic approach (and negleting such details like the curvature of the earth, which for small radius nearby quries is really not a big issue) and use an approach like [this demonstrated by me on stackoverflow](http://stackoverflow.com/questions/17682201/how-to-filter-a-django-model-with-latitude-and-longitude-coordinates-that-fall-w/21429344#21429344) that is: filter objects between certain lattitudes and longitudes, which interesections forms a square circumscribed about circle. One more thing we then need is to filter out objects inside square and outisde circle (pooint-center > radius), which can be done in Python to avoid further database overload
+Well, we could use an even more minimalistic approach (and neglect details like the curvature of the earth, which for small-radius-nearby quries is really not a big issue) and use an approach like [this demonstrated by me on stackoverflow](http://stackoverflow.com/questions/17682201/how-to-filter-a-django-model-with-latitude-and-longitude-coordinates-that-fall-w/21429344#21429344) that is: filter objects between certain lattitudes and longitudes, the interesection of which forms a square circumscribed about circle. One more thing we then need is to filter out objects inside the square and outisde the circle (pooint-center > radius), which can be done in Python to avoid further database overload.
 
 
-Writing raw SQL queries isn't to much elegant, and its usage in Django is seen as antipattern. Additionally we stick to certain database, and we lose the easiness, given by django's ORM, to switch between different databases. On the other hand choice of GeoDjango is also a kind of small limitation, we can choice among following database backends:
+Writing raw SQL queries isn't too elegant, and its usage in Django is seen as an antipattern. Additionally we stick to a certain database, and we lose the easiness (given by django's ORM) of switching between different databases. On the other hand the choice of GeoDjango is also a kind of small limitation, we can choose among the following database backends:
 
 * django.contrib.gis.db.backends.postgis,
 * django.contrib.gis.db.backends.mysql,
 * django.contrib.gis.db.backends.oracle,
 * django.contrib.gis.db.backends.spatialite,
 
-but thanks to choice of GeoDjango we can get rid of writing raw SQL queries, and whats more we get plethora of classes and methods to deal with geospatial data, what will be described bellow.
+but thanks to the choice of GeoDjango we can get rid of writing raw SQL queries, and whats more we get plethora of classes and methods to deal with geospatial data, what will be described bellow.
 
-Mentioned database backends are supporting the geospatiall functionallity do diffrent extend. The comparision of them can be found [here](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#compatibility-tables).
+Mentioned database backends support the geospatiall functionallity to a diffrent extent. Their comparision can be found [here](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#compatibility-tables).
 
 **Why PostGIS?**
 
-Because it offers the most powerfull  functionality for GeoDjango, and is an extension of one of the favourites databases for Django development - postgres.
+Because it offers the most powerfull  functionality for GeoDjango, and is an extension of one of the most popular databases for Django development - postgres.
 
 
 GeoDjango - plethora of possibilites
 ------------------------------------
 
 
-As said using GeoDjango we get plethora of classes and methods to deal with geospatial data, which I try to briefly discuss here:
+As said, using GeoDjango we get a plethora of classes and methods to deal with geospatial data, which I'll try to briefly discuss here:
 
 [Geometry Field Types](https://docs.djangoproject.com/en/dev/ref/contrib/gis/model-api/#django.contrib.gis.db.models.GeometryField):
 
@@ -124,15 +124,15 @@ from string:
 
 - **GeometryCollectionField** - collection for storing heterogenous objects (Poly, points, etc).
 
-It is worth noticing, that while registring in admin model with geospatial data types, we get support with simply map widgets fort selecting Point, Polygon or path. The sad thing is that the default backend is not using Google Maps, but rather very poor maps. But it is possbile to replace the default maps with GogoleMaps using [django-google-maps](https://pypi.python.org/pypi/django-google-maps/0.2.1).
+It is worth noticing, that while registering in the admin model with geospatial data types, we get support with simple map widgets for selecting Point, Polygon or path. The sad thing is that the default backend is not using Google Maps, but rather very poor maps. But it is possbile to replace the default maps with GogoleMaps using [django-google-maps](https://pypi.python.org/pypi/django-google-maps/0.2.1).
 
 ![GeoDjango widget for picking point in admin](/assets/django-admin-pick-point-for-geodjango.png)
 
-Next important element module is `django.contrib.gis.measure` allowing different kinds of measuring the distance between points and other objects. Class [Distance](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#django.contrib.gis.measure.Distance) (can be also aliased by D) allows alos easy manipulation with different units of measure ([avaliable measures](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#supported-units)). In module we find also class [Area](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#area) very hand every time we need to deal with calculating geographic area.
+The next important element of the module is `django.contrib.gis.measure` allowing different kinds of measuring the distance between points and other objects. Class [Distance](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#django.contrib.gis.measure.Distance) (can be also aliased by D) also allows easy manipulation of different units of measure ([avaliable measures](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#supported-units)). In this module we find also the class [Area](https://docs.djangoproject.com/en/dev/ref/contrib/gis/measure/#area) very handy every time we need to deal with calculating A geographic area.
 
 [GeoQuerySet API Reference](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#geoqueryset-api-reference):
 
-We appriciate GeoDjango fully while using [spatial lookups](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#spatial-lookups) and [distance lookups](https://docs.djangoproject.com/en/1.7/ref/contrib/gis/geoquerysets/#distance-lookups) offering us reach possibilites of filtering geospatial data. Below short list of methods, which can be applied to fields of class [GeometryField](https://docs.djangoproject.com/en/dev/ref/contrib/gis/model-api/#geometryfield):
+We appreciate GeoDjango fully while using [spatial lookups](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#spatial-lookups) and [distance lookups](https://docs.djangoproject.com/en/1.7/ref/contrib/gis/geoquerysets/#distance-lookups) offering us rich possibilites of filtering geospatial data. Below a short list of methods, which can be applied to fields of class [GeometryField](https://docs.djangoproject.com/en/dev/ref/contrib/gis/model-api/#geometryfield):
 
 a) ([spatial lookups](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#spatial-lookups)):
 
@@ -142,19 +142,19 @@ b) ([distance lookups](https://docs.djangoproject.com/en/1.7/ref/contrib/gis/geo
 
 * **distance_gt**, **distance_gte**, **distance_lt**, **distance_lte**, **dwithin**
 
-**dwithin** works very simmilar to **distance_lt** but produces different SQL and have different performance (dwithin make better uses of geo indexing)- more can be found [here](http://stackoverflow.com/questions/2235043/geodjango-difference-between-dwithin-and-distance-lt) and [here](http://stackoverflow.com/questions/7845133/how-can-i-query-all-my-data-within-a-distance-of-5-meters)
+**dwithin** works very similar to **distance_lt** but produces different SQL and has different performance (dwithin makes better uses of geo indexing)- more can be found [here](http://stackoverflow.com/questions/2235043/geodjango-difference-between-dwithin-and-distance-lt) and [here](http://stackoverflow.com/questions/7845133/how-can-i-query-all-my-data-within-a-distance-of-5-meters)
 
 
 FuckFinder API  requirements
 ----------------------------
 
-Let's call our demo app "FuckFinder", what in my opinion good reflects the philosophy of Tinder.
+Let's call our demo app "FuckFinder", what in my opinion is a good reflection of the philosophy of Tinder.
 
-In this demo we limit to creating:
+In this demo we limit ourselves to creating:
 
 a) simplified user model
 
-b) crucial view responsible for finding useres matching requesting users criteria and of course most important also matching criterium of geolocation, and returning calculated distance between users.
+b) crucial view responsible for finding useres matching users criteria and of course most importantly matching the criterium of geolocation, and returning calculated distance between users.
 
 MODEL of FuckFinder user:
 =========================
@@ -342,11 +342,11 @@ Let's check what is response time and how big is the retuned JSON for:
 
 	http://127.0.0.1:8000/api/fetch_fuckfinder_proposals_for/andi/52.22862/21.00195/
 
-For me the response time was 46 seconds (it of course may vary depending of hardware you have), and the size of returned JSON was above 20MB. It is not acceptable for mobile devices using oftne mobile network, and even on WIFI it is not resonable size.
+For me the response time was 46 seconds (of course it may vary depending of hardware you have), and the size of returned JSON was above 20MB. It is not acceptable for mobile devices which often use the mobile network, and even on WIFI it is not a resonable size.
 
-Let's have a look if order of filtering [sex+age, geo] vs [geo, sex+age] will make the difference. It differs only by 3 seconds. Not big deal.
+Let's have a look if order of filtering [sex+age, geo] vs [geo, sex+age] will make a difference. It differs only by 3 seconds. Not a big deal.
 
-Let's have a look on automatically created index in postgres:
+Let's have a look at the automatically created index in postgres:
 
 	fuckfinder_db=# \d+ api_fuckfinderuser
 	(...)
@@ -383,18 +383,18 @@ After doing so, we get even worses results. Let's try doing it for resonable fie
 	    "api_fuckfinderuser_sex_774e0911fdfeec21_uniq" btree (sex)
 	Has OIDs: no
 
-We make something better, but still we are transfering huge JSON (more than 20MB).
+We made something better, but still we are transfering huge JSON (more than 20MB).
 
-How we can make it smaller, and make our API more efficient? We cane introudce pagination of results.
+How we can make it smaller, and make our API more efficient? We can introudce pagination of results.
 
 PAGINATION
 ==========
 
-Idea of pagination is simply we split results we want to serve in to pages containing only maximally k-results from all, and link to next results page, and on futrhter pages also linkt to previous.
+The idea of pagination is simple, we split results we want to serve into pages containing only k-first results, and link to the next result page, and on futrhter pages also linkt to previous ones.
 
-To implement pagination we will use  `django_core.paginator`, as well `PaginationSerializer` from `Django Rest Framework`.
+To implement pagination we will use  `django_core.paginator`, as well as `PaginationSerializer` from `Django Rest Framework`.
 
-The calculated on the go `distance` field in queryset as well our geo field `last_location` because of being more complicated objects require explicit information how this should be serialized. We do it in `to_representation` of Serializer class.
+The calculated on the go `distance` field in queryset and our geo field `last_location` require explicit information on how they should be serialized. We specify it in `to_representation` of Serializer class.
 {% highlight python %}
 (...)
 class FuckFinderUserListSerializer(serializers.ModelSerializer):
@@ -469,7 +469,7 @@ def fetch_fuckfinder_proposals_for(request, nick_of_finder, current_latitude, cu
     return Response(serializer.data)
 {% endhighlight %}
 
-Use of pagination semms making a big change for our problem. Even someone very determined to find love probbaly wouldnt browse several thousands of results (in our example without pagination it was: 89,5k !!)at once, and the device of this person for sure ;-) While setting pagination to k=20 results, we came from huge 20MB repsonse to tiny 5KB, and the repsonse time is less than 2 seconds.
+The use of pagination seems making a big change for our problem. Even someone desperate for love probaly wouldnt browse through several thousands of results at once (in our example without pagination it was: 89,5k !!) ;-) While setting pagination to k=20 results, we came down from 20MB repsonse size to 5KB, and the repsonse time is less than 2 seconds.
 
 Response looks as follows:
 {% highlight json %}
