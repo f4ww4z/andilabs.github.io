@@ -3,13 +3,13 @@ layout: post
 published: true
 title: "Building an efficient backend for mobile app, which uses geolocation and spatial data (demo of using PostGIS and GeoDjango)"
 date:   2015-01-31 14:05:00
-categories: django devops tools postgres postgis
+categories: django devops tools postgres postgis geodjango mobile-backend rest nearby-search
 ---
 
 INTRO
 -----
 
-In this note I would like to show you how to create a piece of mobile app's backend, which uses geospatial data. Instead of conventional demo showing how to make simple narby queries e.g for some restaurants, I demonsrate how to build a piece of backend for app like [Tinder](http://en.wikipedia.org/wiki/Tinder_(application)).
+In this note I would like to show you how to create a piece of mobile app's backend, which uses geospatial data. Instead of conventional demo showing how to make simple nearby queries e.g for some restaurants, I demonsrate how to build a piece of backend for an app like [Tinder](http://en.wikipedia.org/wiki/Tinder_(application)).
 
 TECHNOLOGY STACK
 -----------
@@ -21,7 +21,7 @@ TECHNOLOGY STACK
 WHY PostGIS?
 -----------------
 
-Teoretically we could use any database for storing latitude and longitude and make nearby-queries using universl mathematical formula know as [Haversine formula](http://en.wikipedia.org/wiki/Haversine_formula).
+Teoretically we could use any database for storing latitude and longitude and make nearby-queries using universal mathematical formula known as [Haversine formula](http://en.wikipedia.org/wiki/Haversine_formula).
 Below I present two django views. First uses standard MySQL database (but in fact it could be any offering basic math like cos, sin) and the second one make use of GeoDjango (with PostGIS behind):
 
 {% highlight python %}
