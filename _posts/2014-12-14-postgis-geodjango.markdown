@@ -330,7 +330,11 @@ INSTALACJE POSTGIS i KONFIGURACJA DJANGO
 
 informacja jak na poszczególnych systemach zainstalować postgres znajdziesz tutaj: [http://postgis.net/install/](http://postgis.net/install/)
 
-po zainstalowaniu postgres odpalamy `psql`
+instalujemy GEOS:
+
+http://www.kyngchaos.com/software/frameworks#geos
+
+po zainstalowaniu postgres i GEOS odpalamy `psql`
 
 tworzymy bazę:
 
