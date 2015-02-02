@@ -3,7 +3,7 @@ layout: post
 published: true
 title: "Building an efficient backend for mobile app, which uses geolocation and spatial data (demo of using PostGIS and GeoDjango)"
 date:   2015-01-31 14:05:00
-categories: django devops tools postgres postgis geodjango mobile-backend rest nearby-search
+categories: django devops tools postgres postgis
 ---
 
 INTRO
