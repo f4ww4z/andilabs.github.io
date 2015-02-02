@@ -508,7 +508,7 @@ Full code can be found here:
 REFERENCE:
 ==========
 
-* [stackexchange dla GIS](http://gis.stackexchange.com/)
+* [stackexchange for GIS-oriented topics](http://gis.stackexchange.com/)
 * [GeoDjango Database API](https://docs.djangoproject.com/en/dev/ref/contrib/gis/db-api/#)
 * [Geometry Field Types](https://docs.djangoproject.com/en/dev/ref/contrib/gis/model-api/#django.contrib.gis.db.models.GeometryField)
 * [GeoQuerySet API Reference](https://docs.djangoproject.com/en/dev/ref/contrib/gis/geoquerysets/#geoqueryset-api-reference)
