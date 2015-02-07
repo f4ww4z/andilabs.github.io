@@ -29,13 +29,9 @@ what is quite nice you can build multiple such profiles. You can start them in n
 to be extended
 --------------
 
-start several tmuxed byobu tabs
-run psql console
+using some terminal multiplexer
 
-	/Applications/Postgres.app/Contents/Versions/9.4/bin/psql
-
-run shell_plus
-
-	cd mbf && source ~/.virtualenvs/spots/bin/activate && python manage.py shell_plus --settings=mbf.settings.andi
-
-set env variables
+DONE
+====
+	
+	READ: [TEAMOCIL - automatically create windows and panes in TMUX with configuration from YAML files!](http://andilabs.github.io/utility/os-x/mac-os-x/terminal/iterm/2015/02/07/osx-tmux-configuration-fiels-with-setting-magical-teamocil.html)
