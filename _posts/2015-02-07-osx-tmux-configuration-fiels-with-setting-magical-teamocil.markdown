@@ -48,12 +48,14 @@ windows:
       - commands:
         - source ~/.virtualenvs/spots/bin/activate
         - python manage.py shell_plus --settings=mbf.settings.andi
+        focus: true
       - commands:
         - git fetch
         - git status
       - commands:
         - source ~/.virtualenvs/spots/bin/activate
         - python manage.py runserver --settings=mbf.settings.andi
+    focus: true
 
   - name: frontend
     root: ~/mbf/www/static
@@ -62,6 +64,7 @@ windows:
       - commands:
         - cd js
         - tree
+        focus: true
       - commands:
         - coffee -o js/ -cw coffee/
       - commands:
@@ -77,7 +80,12 @@ windows:
         - mongod
       - commands:
         - mongo
+        focus: true
+
 {% endhighlight %}
+
+I hope the above things are obvious: we define windows inside each we define panes, and apply layout, and set focuse for pane and window. The window with focus will be selected, and inside each window the pane with focus will be selected.
+
 
 Starting
 --------
