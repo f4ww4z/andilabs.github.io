@@ -34,4 +34,4 @@ using some terminal multiplexer
 DONE
 ====
 	
-	READ: [TEAMOCIL - automatically create windows and panes in TMUX with configuration from YAML files!](http://andilabs.github.io/teamocil/tmux/terminal/utility/os-x/mac-os-x/devops/2015/02/07/osx-tmux-configuration-fiels-with-setting-magical-teamocil.html)
+READ: [TEAMOCIL - automatically create windows and panes in TMUX with configuration from YAML files!](http://andilabs.github.io/teamocil/tmux/terminal/utility/os-x/mac-os-x/devops/2015/02/07/osx-tmux-configuration-fiels-with-setting-magical-teamocil.html)
