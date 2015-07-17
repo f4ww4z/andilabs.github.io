@@ -1,7 +1,7 @@
 ---
 layout: post
 published: true
-title:  "TEAMOCIL - automatically create windows and panes in TMUX with YAML files!!"
+title:  "TEAMOCIL - automatically create windows and panes in TMUX with YAML files!"
 date:   2015-02-07 04:35:00
 categories: teamocil tmux terminal utility os-x mac-os-x devops 
 ---
