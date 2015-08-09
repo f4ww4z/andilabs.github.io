@@ -33,7 +33,7 @@ I am using [Google Maps iOS SDK](https://developers.google.com/maps/documentatio
 
 I am rounding float, and want display only integer rating. Then I need only display ⭐️ as many times as value of rating.
 {% highlight objective-c %}
-[@"" stringByPaddingToLength:[@"⭐️" length]*labs(lroundf([marker[@"friendly_rate"]floatValue]))
+[@"" stringByPaddingToLength:[@"⭐️" length]*abs(roundf([marker[@"friendly_rate"]floatValue]))
                   withString: @"⭐️" startingAtIndex:0]
 {% endhighlight %}
 Emoji `[@"⭐️" length]` is 2 not 1!
