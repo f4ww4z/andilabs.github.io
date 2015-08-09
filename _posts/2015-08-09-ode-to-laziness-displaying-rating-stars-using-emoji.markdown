@@ -33,10 +33,11 @@ I am using [Google Maps iOS SDK](https://developers.google.com/maps/documentatio
 
 I am rounding float, and want display only integer rating. Then I need only display ⭐️ as many times as value of rating.
 {% highlight objective-c %}
-[@"" stringByPaddingToLength:[@"⭐️" length]*lroundf([marker[@"friendly_rate"]floatValue])
+[@"" stringByPaddingToLength:[@"⭐️" length]*labs(lroundf([marker[@"friendly_rate"]floatValue]))
                   withString: @"⭐️" startingAtIndex:0]
 {% endhighlight %}
 Emoji `[@"⭐️" length]` is 2 not 1!
+I added labs, because my backend returns -1.00 for non-rated spots.
 
 Another aproach, prepare text stars on backend in django-rest-frameworks serializers `to_represenation` method
 {% highlight python %}
