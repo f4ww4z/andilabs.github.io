@@ -1,0 +1,45 @@
+---
+layout: post
+published: true
+title:  "New in Django 1.8 - Conditional Expressions"
+date:   2015-08-09 11:10:00
+categories: andilabs blog python django db-models conditional-expression extra no-more
+---
+[inspired by this SO question...](http://stackoverflow.com/questions/10329849/django-order-by-specific-order/31611225#31611225)
+Imagine you want force Django to some custome ordering. And you wish to do it on big queryset, and don't want nasty hacks with lambdas and lists in Python, but want use the power of your database.
+The database sudocode could look something like this:
+    order by
+
+    (case
+
+        when id = 5 then 1
+
+        when id = 2 then 2
+
+        when id = 3 then 3
+
+        when id = 1 then 4
+
+        when id = 4 then 5
+
+    end) asc
+
+Example solution using django 1.8 conditional expressions (Case, When) may be:
+
+{% highlight python %}
+from django.db.models import Case, When, Value, IntegerField
+
+SomeModel.objects.annotate(
+    custom_order=Case(
+        When(id=5, then=Value(1)),
+        When(id=2, then=Value(2)),
+        When(id=3, then=Value(3)),
+        When(id=1, then=Value(4)),
+        When(id=4, then=Value(5)),
+        output_field=IntegerField(),
+    )
+).order_by('custom_order')
+{% endhighlight %}
+
+More about conditional expressions in Django: [https://docs.djangoproject.com/en/1.8/ref/models/conditional-expressions/](https://docs.djangoproject.com/en/1.8/ref/models/conditional-expressions/)
+

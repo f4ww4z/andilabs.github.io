@@ -1,0 +1,60 @@
+---
+layout: post
+published: true
+title:  "New in Django 1.8 - Query Expressions F() Func()"
+date:   2015-08-29 10:05:00
+categories: django django-1-8 expressions Func F
+---
+
+After brief info about F() I would like to show you Func(), which I find really sexy way to execute database specific functions wihout need of using extra or even stranger raw.
+
+[https://docs.djangoproject.com/en/1.8/ref/models/database-functions/](https://docs.djangoproject.com/en/1.8/ref/models/database-functions/)
+
+>The classes documented below provide a way for users to use **functions provided by the underlying database as annotations, aggregations, or filters in Django**. Functions are also expressions, so they can be used and combined with other expressions like aggregate functions.
+
+[https://docs.djangoproject.com/en/1.8/ref/models/expressions/](https://docs.djangoproject.com/en/1.8/ref/models/expressions/)
+
+Use cases:
+----------
+
+Using [postgres regexp_replace](http://www.postgresql.org/docs/9.4/static/functions-matching.html#FUNCTIONS-POSIX-REGEXP) for creating annotated version of field with escaping certain chars
+=======================================================
+
+(in this case chars not allowed as windows file names: `*"/[]:;|=><,|`) and having annotated save name to our model. From postgres documentation we can find out, that this db function usage should looks like this:
+
+    regexp_replace(string text, pattern text, replacement text [, flags text])
+
+Example of using `regexp_replace` from inside of Django by cool `Func`:
+
+{% highlight python %}
+SomeModel.objects.all().annotate(
+    escaped_save_name=Func(
+        F('some_field'),
+        Value('[\*\"\/\\\[\]\:\;\|\=\>\<\,\|]'), Value('-'), Value('g'),
+        function='regexp_replace',
+    )
+)
+{% endhighlight %}
+
+We pass to func:
+
+**F()** with name of certain database field
+
+**Value()** with needed args, that is: pattern text, replacment text, g flag saying that we want replace each occurence (not only the first one)
+
+kwarg **function** specifying database function we want execute on F() with args
+
+Using [postgres array_length](http://www.postgresql.org/docs/8.4/static/functions-array.html) for annotatting model with length of its array field to sort by this length.
+============================================================================
+
+
+{% highlight python %}
+SomeModel.objects.all().annotate(
+    some_array_field_len=
+        Func(
+            F('some_array_field'),
+            function='array_length',
+            *(1,)
+        )
+).order_by('some_array_field_len')
+{% endhighlight %}
