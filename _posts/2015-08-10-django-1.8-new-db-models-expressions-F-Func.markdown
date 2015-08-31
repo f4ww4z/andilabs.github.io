@@ -89,3 +89,10 @@ SomeModel.objects.all().annotate(
         )
 ).order_by('some_array_field_len')
 {% endhighlight %}
+
+
+Benefit
+-------
+
+Access to powerfull functions offered by Postgres.
+[http://www.postgresql.org/docs/9.1/static/functions.html](http://www.postgresql.org/docs/9.1/static/functions.html)
