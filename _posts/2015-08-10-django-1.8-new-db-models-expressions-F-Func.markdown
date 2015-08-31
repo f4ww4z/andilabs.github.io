@@ -20,7 +20,17 @@ An F() object represents the value of a model field or annotated column. It make
 
 >When Django encounters an instance of F(), it overrides the standard Python operators to create an encapsulated SQL expression;
 
-Instead, Django uses the F() object to generate a SQL expression that describes the required operation at the database level.
+>F() can be used on QuerySets of object instances, with update(). This reduces the two queries we were using before - the get() and the save() - to just one.
+
+>F() therefore can offer performance advantages by:
+getting the database, rather than Python, to do work
+reducing the number of queries some operations require
+
+>Another useful benefit of F() is that having the database - rather than Python - update a field’s value avoids a race condition.
+
+>Django supports the use of addition, subtraction, multiplication, division, modulo, and power arithmetic with F() objects, both with constants and with other F() objects. Instead, Django uses the F() object to generate a SQL expression that describes the required operation at the database level.
+
+>F() can be used to create dynamic fields on your models by combining different fields with arithmetic
 
 
 Use cases:
