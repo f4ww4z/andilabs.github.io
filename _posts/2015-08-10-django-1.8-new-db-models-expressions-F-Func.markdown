@@ -75,7 +75,7 @@ We pass to func:
 
 kwarg **function** specifying database function we want execute on F() with args
 
-Using [postgres array_length](http://www.postgresql.org/docs/8.4/static/functions-array.html) for annotatting model with length of its array field to sort by this length.
+Using [postgres array_length](http://www.postgresql.org/docs/8.4/static/functions-array.html) for annotatting model with length of its array field to sort by this length. ArrayField can be in fact grid - array of arrays, so when you use array_length you have to provide which row. I am using 1-dim array, so I provide 1.
 ============================================================================
 
 
