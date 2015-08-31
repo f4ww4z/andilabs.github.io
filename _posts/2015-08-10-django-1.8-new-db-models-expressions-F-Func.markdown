@@ -91,6 +91,11 @@ SomeModel.objects.all().annotate(
 {% endhighlight %}
 
 
+Build own library on top of database functions
+----------------------------------------------
+You can override djangos Func and provide own logic over some db function, which can be then easily used in your application.
+
+
 Benefit
 -------
 
