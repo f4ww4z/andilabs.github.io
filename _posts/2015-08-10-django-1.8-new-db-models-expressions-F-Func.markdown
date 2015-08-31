@@ -17,6 +17,9 @@ After brief info about F() I would like to show you Func(), which I find really 
 >class F
 An F() object represents the value of a model field or annotated column. It makes it possible to refer to model field values and perform database operations using them without actually having to pull them out of the database into Python memory.
 
+
+>When Django encounters an instance of F(), it overrides the standard Python operators to create an encapsulated SQL expression;
+
 Instead, Django uses the F() object to generate a SQL expression that describes the required operation at the database level.
 
 
