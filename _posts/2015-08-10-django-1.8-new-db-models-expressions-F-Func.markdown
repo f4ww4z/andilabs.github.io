@@ -14,8 +14,10 @@ After brief info about F() I would like to show you Func(), which I find really 
 
 [https://docs.djangoproject.com/en/1.8/ref/models/expressions/](https://docs.djangoproject.com/en/1.8/ref/models/expressions/)
 
->class F
-An F() object represents the value of a model field or annotated column. It makes it possible to refer to model field values and perform database operations using them without actually having to pull them out of the database into Python memory.
+F
+--
+
+>An F() object represents the value of a model field or annotated column. It makes it possible to refer to model field values and perform database operations using them without actually having to pull them out of the database into Python memory.
 
 
 >When Django encounters an instance of F(), it overrides the standard Python operators to create an encapsulated SQL expression;
@@ -32,6 +34,16 @@ reducing the number of queries some operations require
 
 >F() can be used to create dynamic fields on your models by combining different fields with arithmetic
 
+
+Func
+----
+
+> Func() expressions are the base type of all expressions that involve database functions
+
+Value
+------
+
+>A Value() object represents the smallest possible component of an expression: a simple value. When you need to represent the value of an integer, boolean, or string within an expression, you can wrap that value within a Value().
 
 Use cases:
 ----------
