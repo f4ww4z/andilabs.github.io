@@ -58,6 +58,7 @@ Using [postgres regexp_replace](http://www.postgresql.org/docs/9.4/static/functi
 Example of using `regexp_replace` from inside of Django by cool `Func`:
 
 {% highlight python %}
+from django.db.models import F, Func, Value
 SomeModel.objects.all().annotate(
     escaped_save_name=Func(
         F('some_field'),
@@ -80,6 +81,7 @@ Using [postgres array_length](http://www.postgresql.org/docs/8.4/static/function
 
 
 {% highlight python %}
+from django.db.models import F, Func
 SomeModel.objects.all().annotate(
     some_array_field_len=
         Func(
