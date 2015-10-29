@@ -1,6 +1,6 @@
 ---
 layout: post
-published: true
+published: false
 title:  "Budowanie wydajnego backendu aplikacji mobilnej wykorzystującej geolokalizację i dane przestrzenne (demo wykorzystania PostGIS i GeoDjango)."
 date:   2014-12-14 14:05:00
 categories: django devops tools postgres postgis
