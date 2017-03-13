@@ -1,7 +1,7 @@
 ---
 layout: post
 published: true
-title:  "New in Django 1.8 - Conditional Expressions"
+title:  "New in Django 1.8 - Conditional Expressions Case() When()"
 date:   2015-08-09 11:10:00
 categories: andilabs blog python django db-models conditional-expression extra no-more
 ---
