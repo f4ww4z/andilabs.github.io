@@ -41,4 +41,9 @@ demo: [https://www.xn--80ak6aa92e.com/ ](https://www.xn--80ak6aa92e.com/) will b
 
 
 
+webdeveloper issues:
+====================
 
+Be aware that `html5` form field `email` will pass all chars submited to your backend being already punycoded!! So be aware when implementing custom filtering mechanism to not search for raw stuff like `mason@日本.com` but rather `mason@xn--wgv71a.com`
+
+python libs for conversion [https://pypi.python.org/pypi/idna](https://pypi.python.org/pypi/idna)
