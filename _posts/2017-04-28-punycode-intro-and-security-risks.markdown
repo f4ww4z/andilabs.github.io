@@ -31,6 +31,8 @@ https://www.punycoder.com/
 risks:
 ======
 
+![fake apple.com looking pretty legit](/assets/punycode-fake-apple-website.jpg)
+
 demo: https://www.xn--80ak6aa92e.com/ will be converted to for user in web browser (till security update) as https://www.apple.com what more with green padlock standing for valid certificate!!! STRANGE
 
 
