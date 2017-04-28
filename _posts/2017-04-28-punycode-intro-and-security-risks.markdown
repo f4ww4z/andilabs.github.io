@@ -23,19 +23,19 @@ On the lower layers of communication there are no hànzì chars or other chars b
 e.g `日本.com` is converted to `xn--wgv71a.com`
 
 more on punycode:
-![https://en.wikipedia.org/wiki/Punycode](https://en.wikipedia.org/wiki/Punycode)
-![https://tools.ietf.org/html/rfc3492](https://tools.ietf.org/html/rfc3492)
+[https://en.wikipedia.org/wiki/Punycode](https://en.wikipedia.org/wiki/Punycode)
+[https://tools.ietf.org/html/rfc3492](https://tools.ietf.org/html/rfc3492)
 
 web converter can be found here: 
-![https://www.punycoder.com/](https://www.punycoder.com/)
+[https://www.punycoder.com/](https://www.punycoder.com/)
 
 
 risks:
 ======
 
-![fake apple.com looking pretty legit](/assets/punycode-fake-apple-website.jpg)
+[fake apple.com looking pretty legit](/assets/punycode-fake-apple-website.jpg)
 
-demo: ![https://www.xn--80ak6aa92e.com/ ](https://www.xn--80ak6aa92e.com/) will be converted to for user in web browser (till security update) as `https://www.apple.com` what more with green padlock standing for valid certificate!!! STRANGE
+demo: [https://www.xn--80ak6aa92e.com/ ](https://www.xn--80ak6aa92e.com/) will be converted to for user in web browser (till security update) as `https://www.apple.com` what more with green padlock standing for valid certificate!!! STRANGE
 
 
 
