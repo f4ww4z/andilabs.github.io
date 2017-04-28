@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Punycode. Intro and risks."
-date:   2014-11-14 20:31:17
+date:   2017-04-28 10:31:17
 categories: punycode security unicode beyond-ascii blog andilabs RFC3490 RFC3492
 ---
 
