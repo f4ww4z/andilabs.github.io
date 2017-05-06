@@ -35,7 +35,7 @@ risks:
 
 ![fake apple.com looking pretty legit](/assets/punycode-fake-apple-website.jpg)
 
-demo: [https://www.xn--80ak6aa92e.com/ ](https://www.xn--80ak6aa92e.com/) will be converted to for user in web browser (till security update) as `https://www.apple.com` what more with green padlock standing for valid certificate!!! STRANGE
+demo: [https://www.xn--80ak6aa92e.com/ ](https://www.xn--80ak6aa92e.com/) will be converted to for user in web browser (till security update) as `https://www.аррӏе.com` [there is "fake" char in place of `l`] what more with green padlock standing for valid certificate!!! STRANGE
 
 ![seems legit](/assets/seems-legit.jpg)
 
